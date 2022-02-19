@@ -21,3 +21,9 @@ variable "region" {
   type        = string
   default     = "us-east-1"
 }
+
+variable "glue_jobs_prefix" {
+  description = "S3 prefix denoting locations for all Glue jobs."
+  type        = string
+  default     = "jobs-scripts"
+}
