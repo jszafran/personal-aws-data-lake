@@ -39,7 +39,33 @@ resource "aws_iam_policy" "data_lake_s3_access_policy" {
 EOF
 }
 
+resource "aws_iam_role" "lambda_data_lake_role" {
+  name = "lambda-data-lake-role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role_policy_attachment" "glue-s3-access-role-policy-attachment" {
   role       = aws_iam_role.glue_data_lake_role.name
+  policy_arn = aws_iam_policy.data_lake_s3_access_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda-s3-access-role-policy-attachment" {
+  role       = aws_iam_role.lambda_data_lake_role.name
   policy_arn = aws_iam_policy.data_lake_s3_access_policy.arn
 }
