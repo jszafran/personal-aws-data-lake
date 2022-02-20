@@ -1,6 +1,6 @@
 resource "aws_glue_job" "hello_world_glue_spark_job" {
   name              = "hello-world-glue-job"
-  role_arn          = aws_iam_role.glue_s3_data_lake_access_role.arn
+  role_arn          = aws_iam_role.glue_data_lake_role.arn
   glue_version      = "3.0"
   number_of_workers = 2
   worker_type       = "G.1X"

@@ -4,7 +4,6 @@ from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
-from awsglue.dynamicframe import DynamicFrame
 
 
 def main():
@@ -25,13 +24,15 @@ def main():
         ]
     )
 
-    dframe = DynamicFrame.fromDF(df, glueContext, "hello_world_frame")
+    s3_path = "s3://jszafran-data-lake/curated-layer/hello_world_parquet"
 
-    glueContext.write_dynamic_frame_from_options(
-        frame=dframe,
-        connection_type="s3",
-        connection_options={"path": "s3://jszafran-data-lake/curated-layer/hello_world_parquet"},
-        format="parquet",
+    # glue dynamic dataframe does not support saving parquet in overwrite mode yet
+    (
+        df
+        .write
+        .mode("overwrite")
+        .format("parquet")
+        .save(s3_path)
     )
 
 
