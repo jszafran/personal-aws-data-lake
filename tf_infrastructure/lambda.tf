@@ -2,7 +2,7 @@ data "archive_file" "fetch_justjoinit_raw_data_zip_file" {
   type        = "zip"
   output_path = "/tmp/fetch_justjoinit_raw_data_zip_file.zip"
   source {
-    content  = file("lambdas/fetch_justjoinit_raw_data.py")
+    content  = file("../py_sources/lambdas/fetch_justjoinit_raw_data.py")
     filename = "lambda_function.py"
   }
 }
