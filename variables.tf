@@ -27,3 +27,9 @@ variable "glue_jobs_prefix" {
   type        = string
   default     = "jobs-scripts"
 }
+
+variable "notifications_email_address" {
+  description = "Email address for sending all data lake related notifications."
+  type        = string
+  default     = "jsz.datalake.notifications@gmail.com"
+}
