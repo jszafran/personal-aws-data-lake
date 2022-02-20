@@ -33,3 +33,9 @@ variable "notifications_email_address" {
   type        = string
   default     = "jsz.datalake.notifications@gmail.com"
 }
+
+variable "data_lake_admin_email" {
+  description = "Data lake admin email"
+  type        = string
+  default     = "jszafran.pv@gmail.com"
+}
