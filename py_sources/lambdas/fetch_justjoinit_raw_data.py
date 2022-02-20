@@ -1,10 +1,12 @@
+import os
+
 import urllib3
 import boto3
 import datetime
 
-
 JUSTJOINIT_URL = "https://justjoin.it/api/offers"
 S3 = boto3.resource("s3")
+SNS = boto3.client("sns")
 
 
 def lambda_handler(event, context):
@@ -23,8 +25,21 @@ def lambda_handler(event, context):
     )
 
     if response.status != 200:
-        # TODO: implement some kind of notification (SNS)?
-        return "error"
+        job_failed_topic_arn = os.environ.get("JOB_FAILED_TOPIC_ARN")
+        SNS.publish(
+            TopicArn=job_failed_topic_arn,
+            Subject="Fetch Raw JustJoinIt data ETL failed",
+            Message=f"Details: {response.data}"
+        )
+        return {
+            "status": "FAILED",
+            "error_details": str(response.data),
+        }
 
+    # TODO: add exception handling for S3 upload error
     s3_object.put(Body=response.data)
-    return {'message': f"FetchRawJustJoinItData for {today.isoformat()} succeeded."}
+
+    return {
+        "message": f"FetchRawJustJoinItData for {today.isoformat()} succeeded.",
+        "status": "SUCCEEDED",
+    }
