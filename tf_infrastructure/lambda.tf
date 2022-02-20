@@ -15,4 +15,10 @@ resource "aws_lambda_function" "fetch_justjoinit_raw_data" {
   source_code_hash = data.archive_file.fetch_justjoinit_raw_data_zip_file.output_base64sha256
   runtime          = "python3.9"
   timeout          = 15
+
+  environment {
+    variables = {
+      JOB_FAILED_TOPIC_ARN = aws_sns_topic.etl_job_failed.arn
+    }
+  }
 }
