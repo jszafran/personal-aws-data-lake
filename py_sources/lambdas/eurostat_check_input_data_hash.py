@@ -25,7 +25,9 @@ def get_data_source_hash_history() -> HashHistory:
     """
     etl_meta = {}
     try:
-        etl_meta = SOURCES_HASHES_OBJECT.get()["Body"].read().decode(ENCODING)
+        etl_meta = json.loads(
+            SOURCES_HASHES_OBJECT.get()["Body"].read().decode(ENCODING)
+        )
         etl_meta = {datetime.datetime.fromisoformat(k): v for k, v in etl_meta.items()}
     except S3.meta.client.exceptions.NoSuchKey:
         pass
