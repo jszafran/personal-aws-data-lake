@@ -288,3 +288,5 @@ override.tf.json
 terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all,python,terraform
+
+raw_data/*
