@@ -1,6 +1,6 @@
 import pathlib
 
-import awswrangler as wr
+# import awswrangler as wr
 import pandas as pd
 from dotenv import load_dotenv
 
@@ -30,13 +30,7 @@ df["weekly_deaths"] = df["weekly_deaths"].apply(
     lambda x: int(x.replace("p", "")) if ":" not in x else None
 )
 
-df = df[(df["country"].isin(["PL", "BE"])) & (df["year"].isin([2019, 2020]))]
-
-# exemplary write to S3 as parquet
-wr.s3.to_parquet(
-    df,
-    path="s3://jszafran-data-lake/curated-layer/eurostat/eurostat_parquet",
-    dataset=True,
-    mode="overwrite",
-    partition_cols=["country", "year"],
-)
+# TODO: implement as lambda
+# TODO: remember about saving hash after successful processing
+df.to_parquet("parquet")
+df.to_csv("just_csv.csv")

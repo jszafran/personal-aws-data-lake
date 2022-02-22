@@ -17,6 +17,12 @@ data "archive_file" "check_eurostat_input_data_hash_zip_file" {
   }
 }
 
+data "archive_file" "eurostat_etl_common_layer" {
+  type        = "zip"
+  output_path = "/tmp/data_lake_tf/eurostat_lambda_layer.zip"
+  source_dir  = "../py_sources/eurostat_weekly_deaths_etl/lambda-layer"
+}
+
 resource "aws_lambda_function" "fetch_justjoinit_raw_data" {
   function_name    = "fetch_justjoinit_raw_data"
   role             = aws_iam_role.lambda_data_lake_role.arn
@@ -41,4 +47,12 @@ resource "aws_lambda_function" "check_eurostat_input_data_hash" {
   source_code_hash = data.archive_file.check_eurostat_input_data_hash_zip_file.output_base64sha256
   runtime          = "python3.9"
   timeout          = 20
+  layers           = [aws_lambda_layer_version.eurostat_etl_common_layer.arn]
+}
+
+resource "aws_lambda_layer_version" "eurostat_etl_common_layer" {
+  filename   = data.archive_file.eurostat_etl_common_layer.output_path
+  layer_name = "eurostat_etl_common_layer"
+
+  compatible_runtimes = ["python3.9"]
 }
