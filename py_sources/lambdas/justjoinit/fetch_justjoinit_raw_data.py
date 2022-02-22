@@ -1,8 +1,8 @@
+import datetime
 import os
 
-import urllib3
 import boto3
-import datetime
+import urllib3
 
 JUSTJOINIT_URL = "https://justjoin.it/api/offers"
 S3 = boto3.resource("s3")
@@ -16,7 +16,9 @@ def lambda_handler(event, context):
     http = urllib3.PoolManager()
     today = datetime.date.today()
     year, month, day = today.year, today.month, today.day
-    s3_object = S3.Object("jszafran-data-lake", f"raw-layer/justjoinit/{year}/{month}/{day}.json")
+    s3_object = S3.Object(
+        "jszafran-data-lake", f"raw-layer/justjoinit/{year}/{month}/{day}.json"
+    )
 
     response = http.request(
         "GET",
@@ -29,7 +31,7 @@ def lambda_handler(event, context):
         SNS.publish(
             TopicArn=job_failed_topic_arn,
             Subject="Fetch Raw JustJoinIt data ETL failed",
-            Message=f"Details: {response.data}"
+            Message=f"Details: {response.data}",
         )
         return {
             "status": "FAILED",

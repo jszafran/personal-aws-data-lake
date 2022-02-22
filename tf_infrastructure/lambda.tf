@@ -1,8 +1,9 @@
+// TODO: Switch archive files for Lambda to tf lambda module in the future
 data "archive_file" "fetch_justjoinit_raw_data_zip_file" {
   type        = "zip"
   output_path = "/tmp/fetch_justjoinit_raw_data_zip_file.zip"
   source {
-    content  = file("../py_sources/lambdas/fetch_justjoinit_raw_data.py")
+    content  = file("../py_sources/lambdas/justjoinit/fetch_justjoinit_raw_data.py")
     filename = "lambda_function.py"
   }
 }
@@ -11,7 +12,7 @@ data "archive_file" "check_eurostat_input_data_hash_zip_file" {
   type        = "zip"
   output_path = "/tmp/check_eurostat_input_data_hash_zip_file.zip"
   source {
-    content  = file("../py_sources/lambdas/eurostat_check_input_data_hash.py")
+    content  = file("../py_sources/lambdas/eurostat_weekly_deaths/eurostat_check_input_data_hash.py")
     filename = "lambda_function.py"
   }
 }
