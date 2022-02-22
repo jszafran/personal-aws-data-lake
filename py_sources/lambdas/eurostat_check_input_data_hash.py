@@ -19,22 +19,25 @@ DATA_SOURCE_URL = "https://ec.europa.eu/eurostat/estat-navtree-portlet-prod/Bulk
 HashHistory = Dict[datetime.datetime, str]
 
 
-def get_data_source_hash_history() -> HashHistory:
+def get_data_sources_hash_history() -> HashHistory:
     """
     Fetches data source hashes history from S3.
     """
-    etl_meta = {}
+    sources_hash_history = {}
     try:
-        etl_meta = json.loads(
+        sources_hash_history = json.loads(
             SOURCES_HASHES_OBJECT.get()["Body"].read().decode(ENCODING)
         )
-        etl_meta = {datetime.datetime.fromisoformat(k): v for k, v in etl_meta.items()}
+        sources_hash_history = {
+            datetime.datetime.fromisoformat(k): v
+            for k, v in sources_hash_history.items()
+        }
     except S3.meta.client.exceptions.NoSuchKey:
         pass
-    return etl_meta
+    return sources_hash_history
 
 
-def save_sources_hashes_key(hash_history: HashHistory) -> None:
+def save_sources_hash_history(hash_history: HashHistory) -> None:
     hash_history = {k.isoformat(): v for k, v in hash_history.items()}
     SOURCES_HASHES_OBJECT.put(Body=bytes(json.dumps(hash_history).encode(ENCODING)))
 
@@ -56,13 +59,13 @@ def lambda_handler(event, context):
 
     with open(source_path, "rb") as f:
         source_hash = hashlib.sha256(f.read()).hexdigest()
-    source_hashes = get_data_source_hash_history()
+    sources_hash_history = get_data_sources_hash_history()
 
-    if source_hash == get_most_recent_hash(source_hashes):
+    if source_hash == get_most_recent_hash(sources_hash_history):
         return {"message": f"Hash {source_hash} already processed."}
 
-    source_hashes[datetime.datetime.utcnow()] = source_hash
-    save_sources_hashes_key(source_hashes)
+    sources_hash_history[datetime.datetime.utcnow()] = source_hash
+    save_sources_hash_history(sources_hash_history)
     # TODO:
-    # push to S3
+    # push to S3 & return message with S3 link that will be picked up by next task in AWS Step Function workflow
     return {"message": "About to process hash"}
