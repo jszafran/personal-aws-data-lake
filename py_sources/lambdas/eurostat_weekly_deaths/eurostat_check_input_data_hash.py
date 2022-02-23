@@ -25,7 +25,7 @@ HashHistory = Dict[datetime.datetime, str]
 def lambda_handler(event, context):
     http = urllib3.PoolManager()
     current_time = datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-    filename = f"eurostat-weekly-deaths-{current_time}.tsv"
+    filename = f"eurostat-weekly-deaths-{current_time}.tsv.gz"
     source_path = pathlib.Path(f"/tmp/{filename}")
 
     with http.request("GET", DATA_SOURCE_URL, preload_content=False) as resp, open(
