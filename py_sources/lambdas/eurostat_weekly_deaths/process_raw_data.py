@@ -63,7 +63,7 @@ def lambda_handler(event, context):
         transformed_df,
         path="s3://jszafran-data-lake/curated-layer/eurostat",
         dataset=True,
-        partition_cols=["country", "year"],
+        partition_cols=["country"],
     )
     dbgprint("Saved parquet")
 
