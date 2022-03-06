@@ -1,13 +1,13 @@
 import sys
 
-from awsglue.utils import getResolvedOptions
-from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
 
 
 def main():
-    args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+    args = getResolvedOptions(sys.argv, ["JOB_NAME"])
 
     sc = SparkContext()
     glueContext = GlueContext(sc)
@@ -15,7 +15,7 @@ def main():
     spark = glueContext.spark_session
 
     job = Job(glueContext)
-    job.init(args['JOB_NAME'], args)
+    job.init(args["JOB_NAME"], args)
 
     df = spark.createDataFrame(
         [
@@ -27,13 +27,7 @@ def main():
     s3_path = "s3://jszafran-data-lake/curated-layer/hello_world_parquet"
 
     # glue dynamic dataframe does not support saving parquet in overwrite mode yet
-    (
-        df
-        .write
-        .mode("overwrite")
-        .format("parquet")
-        .save(s3_path)
-    )
+    (df.write.mode("overwrite").format("parquet").save(s3_path))
 
 
 if __name__ == "__main__":

@@ -39,3 +39,8 @@ variable "data_lake_admin_email" {
   type        = string
   default     = "jszafran.pv@gmail.com"
 }
+
+variable "default_python_lambda_runtime" {
+  type    = string
+  default = "python3.9"
+}
