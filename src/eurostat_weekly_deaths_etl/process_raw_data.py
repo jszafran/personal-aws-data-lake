@@ -1,16 +1,6 @@
-import datetime
-
 import awswrangler as wr
 import pandas as pd
 from etl_common import hash_tracker, messages
-
-
-def dbgprint(text):
-    """
-    Debugging helper to understand what stage takes the most time
-    """
-    # TODO: implement some kind of logging and make it a lambda layer
-    print(f"{datetime.datetime.utcnow().isoformat()}: {text}")
 
 
 def transform_eurostat_raw_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -57,7 +47,7 @@ def lambda_handler(event, context):
     # create parquet
     wr.s3.to_parquet(
         transformed_df,
-        path="s3://jszafran-data-lake/curated-layer/eurostat",
+        path="s3://jszafran-data-lake/curated-layer/eurostat-weekly-deaths",
         dataset=True,
         partition_cols=["country"],
         mode="overwrite",
@@ -67,9 +57,10 @@ def lambda_handler(event, context):
     hash_tracker.save_source_hash(source_hash)
     wr.s3.copy_objects(
         paths=[s3_input_path],
-        source_path=s3_input_path.split("s3://jszafran-data-lake/raw-layer/eurostat/"),
-        target_path="s3://jszafran-data-lake/raw-layer/eurostat/archived/",
+        source_path="s3://jszafran-data-lake/raw-layer/eurostat-weekly-deaths/",
+        target_path="s3://jszafran-data-lake/raw-layer/eurostat-weekly-deaths/archived/",
     )
+    wr.s3.delete_objects(path=[s3_input_path])
 
     return {
         "message": messages.SOURCE_SUCCESSFULLY_INGESTED,

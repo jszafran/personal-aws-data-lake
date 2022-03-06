@@ -15,7 +15,7 @@ resource "aws_glue_catalog_table" "eurostat_weekly_deaths" {
   }
 
   storage_descriptor {
-    location      = "s3://jszafran-data-lake/curated-layer/eurostat/"
+    location      = "s3://jszafran-data-lake/curated-layer/eurostat-weekly-deaths/"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
 
@@ -57,7 +57,6 @@ resource "aws_glue_catalog_table" "eurostat_weekly_deaths" {
     name = "country"
     type = "string"
   }
-
 }
 
 resource "aws_glue_job" "hello_world_glue_spark_job" {
